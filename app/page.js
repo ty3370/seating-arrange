@@ -9,7 +9,7 @@ import {
 
 export default function SeatingPage() {
   const [step, setStep] = useState(1);
-  const [lastNumber, setLastNumber] = useState(25);
+  const [lastNumber, setLastNumber] = useState("25");
   const [excluded, setExcluded] = useState([]);
   const [cols, setCols] = useState(5);
   const [disabledSeats, setDisabledSeats] = useState([]);
@@ -17,7 +17,9 @@ export default function SeatingPage() {
   const [loading, setLoading] = useState(false);
   const [secretRiggedMode, setSecretRiggedMode] = useState(false);
 
-  const validStudents = Array.from({ length: lastNumber }, (_, i) => i + 1).filter(
+  const numericLastNumber = Math.max(1, parseInt(lastNumber) || 1);
+
+  const validStudents = Array.from({ length: numericLastNumber }, (_, i) => i + 1).filter(
     (num) => !excluded.includes(num)
   );
 
@@ -88,15 +90,14 @@ export default function SeatingPage() {
         <div className="flex items-center gap-3">
           <div 
             onClick={() => setSecretRiggedMode(!secretRiggedMode)} 
-            className="p-3 bg-indigo-600/20 text-indigo-400 rounded-xl cursor-pointer hover:bg-indigo-600/30 transition shadow-inner"
-            title="Class Seat Master"
+            className="p-3 bg-indigo-600/20 text-indigo-400 rounded-xl cursor-default transition shadow-inner select-none"
+            title={secretRiggedMode ? "Seat Arrange" : "seat arrange"}
           >
             <GraduationCap className="w-6 h-6" />
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
               클래스 자리 배치 시스템
-              {secretRiggedMode && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
             </h1>
             <p className="text-xs text-slate-400">공정하고 빠른 학급 좌석 관리 도구</p>
           </div>
@@ -105,8 +106,7 @@ export default function SeatingPage() {
         <div className="flex bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 text-xs">
           {[
             { id: 1, label: "1. 학생 설정" },
-            { id: 2, label: "2. 배열 & 제외석" },
-            { id: 3, label: "3. 결과 확인" },
+            { id: 2, label: "2. 배열 & 자리배치" },
           ].map((item) => (
             <button
               key={item.id}
@@ -135,8 +135,14 @@ export default function SeatingPage() {
                 min="1"
                 max="60"
                 value={lastNumber}
-                onChange={(e) => setLastNumber(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(e) => setLastNumber(e.target.value)}
+                onBlur={() => {
+                  if (!lastNumber || parseInt(lastNumber) < 1) {
+                    setLastNumber("1");
+                  }
+                }}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition"
+                placeholder="마지막 번호를 입력하세요"
               />
             </div>
 
@@ -145,7 +151,7 @@ export default function SeatingPage() {
                 제외할 번호 선택 (전학/결번 클릭)
               </label>
               <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 p-3 bg-slate-900 rounded-xl border border-slate-800 max-h-48 overflow-y-auto">
-                {Array.from({ length: lastNumber }, (_, i) => i + 1).map((num) => {
+                {Array.from({ length: numericLastNumber }, (_, i) => i + 1).map((num) => {
                   const isExcluded = excluded.includes(num);
                   return (
                     <button
@@ -179,7 +185,7 @@ export default function SeatingPage() {
         </div>
       )}
 
-      {(step === 2 || step === 3) && (
+      {step === 2 && (
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-800/60 backdrop-blur p-4 rounded-2xl border border-slate-700/60">
             <div className="flex items-center gap-3">
