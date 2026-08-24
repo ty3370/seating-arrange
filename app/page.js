@@ -54,6 +54,7 @@ export default function SeatingPage() {
 
   const handleAssignSeats = async () => {
     setLoading(true);
+    const currentRiggedState = secretRiggedMode;
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -61,7 +62,7 @@ export default function SeatingPage() {
         body: JSON.stringify({
           totalStudents: validStudents,
           activeSeatsCount: studentCount,
-          isRigged: secretRiggedMode,
+          isRigged: currentRiggedState,
         }),
       });
 
@@ -76,6 +77,10 @@ export default function SeatingPage() {
           }
         }
         setSeatingResult(resultMap);
+
+        if (currentRiggedState) {
+          setSecretRiggedMode(false);
+        }
       }
     } catch (err) {
       alert("자리 배정 중 오류가 발생했습니다.");
@@ -99,7 +104,7 @@ export default function SeatingPage() {
             <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
               클래스 자리 배치 시스템
             </h1>
-            <p className="text-xs text-slate-400">빠르고 편리한 학급 좌석 관리 도구</p>
+            <p className="text-xs text-slate-400">공정하고 빠른 학급 좌석 관리 도구</p>
           </div>
         </div>
 
