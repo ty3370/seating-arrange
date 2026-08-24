@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "스마트 자리배치 시스템",
+  title: "학급 자리배치 시스템",
   description: "학급 맞춤형 랜덤 자리배치 플랫폼",
 };
 
